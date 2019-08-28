@@ -8,7 +8,6 @@ const port = 80
 
 // dingtalk url
 var url = []
-// "https://oapi.dingtalk.com/robot/send?access_token=8138648881fc2be6cac96c4b98bb0ee612b24045759d5bc54b39b30c9c47a8d1"
 
 var argv = process.argv
 argv.includes('-u') ? check('-u') : (argv.includes('--url') ? check('--url') : console.error('Please enter your dingtalk url!'))
