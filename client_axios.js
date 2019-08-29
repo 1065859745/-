@@ -1,6 +1,5 @@
 const axios = require('axios')
 const express = require('express')
-const myLog = require('./exports/log.js')
 const bodyParser = require('body-parser')
 
 // server port default 80
@@ -24,7 +23,6 @@ function startServer() {
     console.log('dingtalk url: %s', element)
   });
   var app = express()
-  var staticFile = __dirname + '/static';
 
   // parser post request
   app.use(bodyParser.urlencoded({ extended: true }))
@@ -34,34 +32,32 @@ function startServer() {
   // test DingTalk interface
   app.get('/test', (req, res) => {
     let messages = "Test dingtalk url"
-    sendMessages(req, res, messages)
-    myLog(req, res)
+    sendMessages(messages)
     res.end()
   })
 
   // send messages to dingtalk
-  function sendMessages(req, res, messages) {
+  function sendMessages(messages) {
+    let mydate = new Date()
     url.forEach(element => {
       axios.post(
         element, '{"msgtype":"text","text":{"content":"' + messages + '"}}',
         { headers: { 'Content-Type': 'application/json' } }
       ).then(function (response) {
-
+        let mylog = mydate.toLocaleString() + '\nSend: ' + messages + '\nDingTalk url: ' + element
         // Whether the message was sent successfully
-        response.data.errmsg == 'ok' ? console.log('messages: %s\nMessage has been successfully sent to DingTalk\nDingTalk url: %s', messages, element) : console.error('Messages sending failure: %s', response.data.errmsg)
-        myLog(req, res)
+        response.data.errmsg == 'ok' ? console.log('%s\nStatus: success', mylog) : console.error('%s\nStatus: fail\nFail messages: %s', mylog, response.data.errmsg)
       }).catch(function (error) {
         console.log(error)
       })
     })
-    myLog(req, res)
   }
 
   app.post('/', bodyParser.json(), (req, res) => {
     // send post request to DingTalk
     let messages
     req.body.commonLabels.instance ? messages = req.body.commonLabels.instance + ' ' + req.body.commonLabels.alertname + '\n开始时间: ' + req.body.alerts[0].startsAt + '\n级别: ' + req.body.commonLabels.severity : messages = 'undefined' + req.body.commonLabels.alertname + '\n开始时间: ' + req.body.alerts[0].startsAt + '\n级别: ' + req.body.commonLabels.severity
-    req.body.receiver ? sendMessages(req, res, messages) : myLog(req, res)
+    req.body.receiver ? sendMessages(messages) : null
     res.end()
   })
 
