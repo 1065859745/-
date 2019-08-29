@@ -55,8 +55,8 @@ function startServer() {
 
   app.post('/', bodyParser.json(), (req, res) => {
     // send post request to DingTalk
-    let messages
-    req.body.commonLabels.instance ? messages = req.body.commonLabels.instance + ' ' + req.body.commonLabels.alertname + '\n开始时间: ' + req.body.alerts[0].startsAt + '\n级别: ' + req.body.commonLabels.severity : messages = 'undefined' + req.body.commonLabels.alertname + '\n开始时间: ' + req.body.alerts[0].startsAt + '\n级别: ' + req.body.commonLabels.severity
+    let messages = req.body.commonLabels.alertname + '\n开始时间: ' + req.body.alerts[0].startsAt + '\n级别: ' + req.body.commonLabels.severity
+    req.body.commonLabels.instance ? messages = req.body.commonLabels.instance + messages : messages = 'undefined' + messages
     req.body.receiver ? sendMessages(messages) : null
     res.end()
   })
