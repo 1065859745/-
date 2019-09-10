@@ -1,6 +1,6 @@
 const axios = require('axios')
-const express = require('express')
-const bodyParser = require('body-parser')
+  , express = require('express')
+  , bodyParser = require('body-parser')
 
 // server port default 80
 const port = 80
