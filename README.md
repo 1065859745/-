@@ -1,11 +1,8 @@
 
 # prometheusSendToDingTlak
-## [Install nodejs](http://nodejs.cn/download/)
-## Install modules
-`npm install`
-## Run application
-`node client_axios.js --url [your dingtalk url]`
-## Thanks
-+ Base on nodejs
-+ express modules
-+ axios modules
+- 安装golang并运行
+- 下载编译好的二进制文件直接运行
+## 安装golang并运行
+```go run send.go http://dingtalk.webhook.url1 http://dingtalk.webhook.url2 ...```
+## 下载编译好的二进制文件运行
+```./send.go http://dingtalk.webhook.url1 http://dingtalk.webhook.url2 ...```
