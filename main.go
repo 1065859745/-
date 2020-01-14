@@ -116,7 +116,7 @@ func middleWare(f http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// 处理prometheus数据
+// 处理 prometheus 数据
 func receiveData(w http.ResponseWriter, r *http.Request) {
 	if alert_byte, e := ioutil.ReadAll(r.Body); e != nil {
 		log.Fatal(e)
@@ -130,10 +130,13 @@ func receiveData(w http.ResponseWriter, r *http.Request) {
 		if e = json.Unmarshal(content, &alerts); e != nil {
 			log.Fatal(e)
 		}
-		for _, v := range alerts {
+		for i, v := range alerts {
+			if i == len(alerts)-1 {
+				text += fmt.Sprintf("%s:  %s  %s", v.Labels.Class, v.Labels.Instance, v.Labels.Alertname)
+			}
 			text += fmt.Sprintf("%s:  %s  %s\n", v.Labels.Class, v.Labels.Instance, v.Labels.Alertname)
-			if serious != true {
-				if v.Labels.Severity == `serious` {
+			if serious == false {
+				if regexp.MustCompile(`serious`).MatchString(v.Labels.Severity) {
 					serious = true
 				}
 			}
@@ -148,10 +151,7 @@ func receiveData(w http.ResponseWriter, r *http.Request) {
 func sendText(msg string, at []string, atAll bool) {
 	// 将发送的信息转成 json 数据
 	var dings Ding
-	dings.Msgtype = `text`
-	dings.Text.Content = msg
-	dings.IsAtAll = atAll
-	dings.At = At{AtMobiles: at}
+	dings.Msgtype, dings.Text.Content, dings.At, dings.IsAtAll = `text`, msg, At{AtMobiles: at}, atAll
 	b, _ := json.Marshal(&dings)
 	client := &http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}}
 	for _, v := range flag.Args() {
