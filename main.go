@@ -131,14 +131,16 @@ func receiveData(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(e)
 		}
 		for i, v := range alerts {
-			if i == len(alerts)-1 {
-				text += fmt.Sprintf("%s:  %s  %s", v.Labels.Class, v.Labels.Instance, v.Labels.Alertname)
-			}
-			text += fmt.Sprintf("%s:  %s  %s\n", v.Labels.Class, v.Labels.Instance, v.Labels.Alertname)
 			if serious == false {
 				if regexp.MustCompile(`serious`).MatchString(v.Labels.Severity) {
 					serious = true
 				}
+			}
+			if i == len(alerts)-1 {
+				text += fmt.Sprintf("%s:  %s  %s", v.Labels.Class, v.Labels.Instance, v.Labels.Alertname)
+
+			} else {
+				text += fmt.Sprintf("%s:  %s  %s\n", v.Labels.Class, v.Labels.Instance, v.Labels.Alertname)
 			}
 		}
 		sendText(text, []string{}, serious)
